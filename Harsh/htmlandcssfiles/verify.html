@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forgot Password</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      h2{
+    text-align: center;
+    color: darkblue;
+    font-size: 60px;
+    font-weight: 700;
+    margin-top: -50px;
+    margin-bottom: 30px;
+}
+p{
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+}
+      .box3 {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url(blur-bg.webp);
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+      .varifyotp {
+        height: 400px;
+        width: 600px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
+        padding-top: 50px;
+      }
+      button {
+        background-color: rgb(65, 40, 128);
+        color: white;
+        width: 300px;
+        height: 70px;
+        border-radius: 40px;
+        border: none;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 50px;
+        font-size: 40px;
+        transition: all 0.4s ease-in-out;
+        cursor: pointer;
+      }
+      button:active {
+        transform: scale(0.6);
+      }
+      .varifyotp input {
+        background-color: rgba(255, 255, 255, 0.7);
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        padding: 10px;
+        margin-top: 50px;
+        width: 400px;
+        height: 30px;
+        font-size: 22px;
+        margin-left: auto;
+        margin-right: auto;
+        color: rgb(62, 62, 62);
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
+        transition: all 0.3s ease-in-out;
+      }
+      .varifyotp input:focus {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+      input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+    </style>
+  </head>
+  <body>
+    <div class="box3">
+        <div class="varifyotp">
+            <h2>Enter OTP</h2>
+            <p>Enter the OTP sent to your registered e-mail address.</p>
+            <input type="number" required placeholder="------" maxlength="6">
+            <button type="submit" value="Verify OTP">Verify OTP</button>
+        </div>
+    </div>
+  </body>
+</html>

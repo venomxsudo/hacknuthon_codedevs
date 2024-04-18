@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        height: 100vh;
+        width: 100%;
+        background-image: url(blur-bg.webp);
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .box {
+        height: 700px;
+        width: 600px;
+        background-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(8px);
+        border-radius: 30px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
+        padding-top: 50px;
+      }
+      .box1 {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-top: -40px;
+      }
+      h2 {
+        padding-left: 90px;
+        color: darkblue;
+        font-size: 60px;
+        font-weight: 700;
+        margin-top: -30px;
+        margin-bottom: 40px;
+      }
+      .box1 input {
+        background-color: rgba(255, 255, 255, 0.7);
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        padding: 10px;
+        margin-top: 30px;
+        width: 400px;
+        height: 30px;
+        font-size: 22px;
+        color: rgb(62, 62, 62);
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
+        transition: all 0.3s ease-in-out;
+      }
+      .box1 input:focus {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .box2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-direction: row;
+        margin-top: 40px;
+        margin-left: 90px;
+        margin-right: auto;
+      }
+      .box2 label {
+        margin: 0;
+        font-size: 20px;
+        color: white;
+      }
+      button {
+        background-color: rgb(65, 40, 128);
+        color: white;
+        width: 300px;
+        height: 70px;
+        border-radius: 40px;
+        border: none;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        font-size: 40px;
+        transition: all 0.4s ease-in-out;
+        cursor: pointer;
+      }
+      button:active {
+        transform: scale(0.6);
+      }
+      p {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: white;
+      }
+      #login {
+        color: blue;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      #login:hover {
+        color: rgb(65, 40, 128);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="box">
+        <h2>Sign Up</h2>
+        <div class="box1">
+          <input
+            type="text"
+            required
+            placeholder="Username"
+          />
+
+          <input
+            type="number"
+            required
+            placeholder="Mobile"
+            maxlength="10"
+          />
+
+          <input
+            type="email"
+            required
+            placeholder="Email"
+          />
+
+          <input
+            type="password"
+            id="pass"
+            required
+            placeholder="Password"
+          />
+
+          <input
+            type="text"
+            id="confirmpass"
+            required
+            placeholder="Confirm Password"
+          />
+        </div>
+        <div class="box2">
+          <input
+            type="checkbox"
+            name="remember"
+            id="remember"
+            style="height: 20px; width: 20px"
+          />
+          <label for="remember">Remember Password</label>
+        </div>
+        <button type="submit" name="signup" id="signup" >
+          Sign Up
+        </button>
+        <p>Already registered ? <a id="login" href="login.html"">Log in</a></p>
+      </div>
+    </div>
+  </body>
+</html>
