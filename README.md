@@ -6,5 +6,3 @@
 - Om Sangani
 - Harsh Mavani
 - Krishiv Patel
-
-hellp
