@@ -32,6 +32,7 @@ from django.http import JsonResponse
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import get_user_model 
+import ollama 
 
 User = get_user_model()
 
@@ -345,6 +346,218 @@ from .decorators import jwt_token_required
 def home_view(request):
     # Your view logic goes here
     return render(request, 'home.html')
+
+# from rest_framework import viewsets
+# from rest_framework.response import Response
+# from .serializers import QuerySerializer
+
+# class QueryViewSet(APIView):
+#     def post(self, request):
+#         serializer = QuerySerializer(data=request.data)
+#         user_query = request.data['user_query']
+#         if serializer.is_valid():
+#             serializer.save()
+#             try:
+#                 import ollama
+#                 r = ollama.generate(model='duckdb-nsql:7b-q4_0',prompt=user_query)
+#                 response_data = {'sql_query': r['response']}
+#                 return Response(response_data, status=status.HTTP_200_OK)
+#             except Exception as e:
+#                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+# from rest_framework import viewsets
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
+# from .serializers import QuerySerializer
+# from .models import ChatHistory
+# import ollama
+
+# from django.db import connection
+# from .models import QueryRun
+# import mysql.connector
+
+# class QueryViewSet(APIView):
+#     def post(self, request):
+#         serializer = QuerySerializer(data=request.data)
+#         user_query = request.data['user_query']
+#         user_info = request.data['user_info']
+#         print(request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             try:
+#                 # Generate SQL query using Ollama
+#                 r = ollama.generate(model='duckdb-nsql:7b-q4_0', prompt=user_query)
+#                 generated_sql_query = r['response']
+#                 print("Generated SQL Query:", generated_sql_query)
+
+#                 # Establish MySQL connection
+#                 mydb = mysql.connector.connect(host='localhost',database='hacknuthon',user='root',password='Harsh@2454')
+                
+#                 if mydb.is_connected():
+#                     print("Connected to MySQL database")
+                    
+#                 cursor = mydb.cursor()
+#                 cursor.execute("use hacknuthon;")
+#                 print("Cursor:", cursor)
+#                 cursor.execute(generated_sql_query)
+#                 print("Cursor Description:", cursor.description)
+#                 mydb.commit()
+#                 print("Data", cursor.fetchall())
+#                     # cursor.execute("create table hello1 (id int, name varchar(255));")
+                
+#                 cursor.close()
+#                 mydb.close()
+#                 # else:
+#                 #     print("Connection failed")
+#                 # print("Cursor:", cursor)
+#                 # print("Cursor Description:", cursor.description)
+#                 # print("Generated SQL Query:", generated_sql_query)
+#                 # print("Data:",cursor.fetchall())
+                
+#                 # if generated_sql_query in "Select" or "select" or "update" or "Update" or "delete" or "Delete" or "insert" or "Insert" or "create" or "Create" or "drop" or "Drop" or "alter" or "Alter" or "truncate" or "Truncate" or "rename" or "Rename":
+#                 #     cursor.commit()
+#                 #     print("Query Committed")
+                        
+#                 # result = cursor.fetchall()
+
+#                 # query_run = QueryRun.objects.create(user=user_info, user_query=user_query,
+#                 #                                      generated_sql_query=generated_sql_query,
+#                 #                                      query_result=result)
+#                 # cursor.close()
+#                 # mydb.close()
+
+#                 # Return response with generated SQL query and query result
+#                 # response_data = {'sql_query': generated_sql_query, 'query_result': result}
+#                 # return Response(response_data, status=status.HTTP_200_OK)
+#             except Exception as e:
+#                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import QuerySerializer
+from .models import ChatHistory, QueryRun
+import ollama
+import mysql.connector
+import logging
+import re
+
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class QueryViewSet(APIView):
+    # def clean_sql_query(self, sql_query):
+    #     pattern = r' ```sql(.*?)```'
+
+    #     # Use regex to find all code blocks matching the pattern
+    #     code_blocks = re.findall(pattern, sql_query, re.DOTALL)
+    #     print("Code Blocks:", code_blocks)
+    #     return code_blocks
+
+    
+    def post(self, request):
+        # Log incoming request data
+        logger.info(f"Received request data: {request.data}")
+
+        # Deserialize the incoming data
+        serializer = QuerySerializer(data=request.data)
+        if serializer.is_valid():
+            # Save the validated data
+            serializer.save()
+            user_query = request.data['user_query']
+            user_info = request.data['user_info']
+
+            try:
+                # Generate SQL query using Ollama
+                r = ollama.generate(model='mistral', prompt=user_query)
+                generated_sql_query = r['response']
+                logger.info(f"Generated SQL Query:{generated_sql_query}")
+                
+
+                # Establish MySQL connection
+                mydb = mysql.connector.connect(host='localhost', database='hacknuthon', user='root', password='Harsh@2454')
+                cursor = mydb.cursor()
+                pattern = r' ```sql(.*?)```'
+                # if patten is matched then it will return the code blocks
+                
+                code_blocks = re.findall(pattern, generated_sql_query, re.DOTALL)        
+                
+                # now i want to convert into 
+                generated_sql_query = ''.join(code_blocks)
+                print("Code Blocks 1:", code_blocks)
+                generated_sql_query = generated_sql_query.replace('/','')
+                cursor.execute("use hacknuthon;")
+                cursor.execute(generated_sql_query)
+                print("Code Blocks:", generated_sql_query)      
+                result = cursor.fetchall()
+
+                # Handling different types of SQL queries
+                # if generated_sql_query.strip().lower().startswith("select"):
+                #     result = cursor.fetchall()
+                #     logger.info(f"Query Result: {result}")
+                # else:
+                #     # Commit if it's a non-SELECT query
+                #     mydb.commit()
+                #     logger.info("Changes committed to the database.")
+                mydb.commit()
+
+                # Save query run to the database
+                query_run = QueryRun.objects.create(
+                    user=user_info,
+                    user_query=user_query,
+                    generated_sql_query=generated_sql_query,
+                    query_result=str(result)
+                )
+
+                # Close cursor and connection
+                cursor.close()
+                mydb.close()
+
+                # Return response with generated SQL query and query result
+                response_data = {'sql_query': generated_sql_query, 'query_result': result}
+                return Response(response_data, status=status.HTTP_200_OK)
+
+            except mysql.connector.Error as e:
+                logger.error(f"MySQL Error: {e}")
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                logger.error(f"Unhandled Exception: {e}")
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # Log serializer errors
+            logger.error(f"Serializer errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# class QueryViewSet(APIView):
+#     def post(self, request):
+#         serializer = QuerySerializer(data=request.data)
+#         user_query = request.data['user_query']
+#         user_info = request.data['user_info']
+#         if serializer.is_valid():
+#             serializer.save()
+#             try:
+#                 # Generate SQL query using Ollama
+#                 r = ollama.generate(model='duckdb-nsql:7b-q4_0', prompt=user_query)
+#                 generated_sql_query = r['response']
+#                 # i want to call the get api of the user and api is /api/user
+#                 # Save user query and generated SQL query to database
+#                 chat_history = ChatHistory.objects.create(user=user_info, user_query=user_query, generated_sql_query=generated_sql_query)
+                
+#                 # Return response with generated SQL query
+#                 response_data = {'sql_query': generated_sql_query}
+#                 return Response(response_data, status=status.HTTP_200_OK)
+#             except Exception as e:
+#                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            
 
 '''
 class VisitorListCreateView(generics.ListCreateAPIView):

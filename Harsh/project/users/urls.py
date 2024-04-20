@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import RegisterView,LoginView,UserView,LogoutView,VerifyOTP,ForgotPasswordView,ResetPasswordView,DeleteUserView,QuerySubmission
+from .views import RegisterView,LoginView,UserView,LogoutView,VerifyOTP,ForgotPasswordView,ResetPasswordView,DeleteUserView,QuerySubmission, QueryViewSet
 urlpatterns = [
     path('register' ,RegisterView.as_view()),
     path('login' ,LoginView.as_view()),
@@ -11,7 +11,7 @@ urlpatterns = [
     path('forgot', ForgotPasswordView.as_view(), name='forgot_password'),
     path('reset', ResetPasswordView.as_view(), name='reset_password'),
     path('deleteUser', DeleteUserView.as_view(),name='delete_user'),
-    path('query', QuerySubmission.as_view(), name='query_submission'),
+    path('queries/', QueryViewSet.as_view(), name='queries_list'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

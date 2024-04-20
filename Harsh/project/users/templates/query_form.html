@@ -1,0 +1,282 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Form</title>
+</head>
+<body>
+    <h1>Query Form</h1>
+    <form id="queryForm">
+        <label for="userQuery">Enter your SQL query:</label><br>
+        <textarea id="userQuery" name="userQuery" rows="4" cols="50"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="queryResult">
+        <!-- Query result will be displayed here -->
+    </div>
+
+    <script>
+        document.getElementById('queryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userQuery = document.getElementById('userQuery').value;
+            fetch('/api/queries/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token if needed
+                },
+                body: JSON.stringify({ user_query: userQuery })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('queryResult').innerHTML = `
+                    <h2>Generated SQL Query:</h2>
+                    <pre>${data.sql_query}</pre>
+                    
+                `;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html> {% endcomment %}
+
+{% comment %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Form</title>
+</head>
+<body>
+    <h1>Query Form</h1>
+    <form id="queryForm">
+        <label for="userQuery">Enter your SQL query:</label><br>
+        <textarea id="userQuery" name="userQuery" rows="4" cols="50"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="queryHistory">
+        <!-- Query history will be displayed here -->
+    </div>
+
+    <script>
+        // Initialize an array to store query history
+        const queryHistory = [];
+
+        // Function to display query history
+        function displayQueryHistory() {
+            const queryHistoryDiv = document.getElementById('queryHistory');
+            queryHistoryDiv.innerHTML = '';
+            queryHistory.forEach(query => {
+                const queryDiv = document.createElement('div');
+                queryDiv.innerHTML = `
+                    <h3>User Query:</h3>
+                    <p>${query.userQuery}</p>
+                    <h3>Generated SQL Query:</h3>
+                    <pre>${query.sqlQuery}</pre>
+                `;
+                queryHistoryDiv.appendChild(queryDiv);
+            });
+        }
+
+        document.getElementById('queryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userQuery = document.getElementById('userQuery').value;
+            fetch('/api/queries/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token if needed
+                },
+                body: JSON.stringify({ user_query: userQuery })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add the new query and result to queryHistory array
+                queryHistory.push({ userQuery: userQuery, sqlQuery: data.sql_query });
+                // Display query history
+                displayQueryHistory();
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Initial display of query history
+        displayQueryHistory();
+    </script>
+</body>
+</html> {% endcomment %}
+
+
+
+{% comment %} 
+    <div id="queryHistory">
+        <!-- Query history will be displayed here -->
+    </div>
+
+    <script>
+        // Initialize an array to store query history
+        const queryHistory = [];
+
+        // Function to display query history
+        function displayQueryHistory() {
+            const queryHistoryDiv = document.getElementById('queryHistory');
+            queryHistoryDiv.innerHTML = '';
+            queryHistory.forEach(query => {
+                const queryDiv = document.createElement('div');
+                queryDiv.innerHTML = `
+                    <h3>User Query:</h3>
+                    <p>${query.userQuery}</p>
+                    <h3>Generated SQL Query:</h3>
+                    <pre>${query.sqlQuery}</pre>
+                `;
+                queryHistoryDiv.appendChild(queryDiv);
+            });
+        }
+
+        // Function to fetch login user information
+        async function fetchLoginUser() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                
+                return data['email'];
+                console.log(data['email'])
+            } catch (error) {
+                console.error('Error fetching login user:', error);
+                return null;
+            }
+        }
+
+        document.getElementById('queryForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const userQuery = document.getElementById('userQuery').value;
+            const loginUser = await fetchLoginUser();
+            console.log(loginUser)
+            if (loginUser) {
+                // Include login user information along with user query
+                const requestBody = {
+                    user_query: userQuery,
+                    user_info: loginUser
+                };
+
+                // Send request with login user information
+                fetch('/api/queries/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token if needed
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Add the new query and result to queryHistory array
+                    queryHistory.push({ userQuery: userQuery, sqlQuery: data.sql_query });
+                    // Display query history
+                    displayQueryHistory();
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                console.error('Login user information not available.');
+            }
+        });
+
+        // Initial display of query history
+        displayQueryHistory();
+    </script>
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Form</title>
+</head>
+<body>
+    <h1>Query Form</h1>
+    <form id="queryForm">
+        <label for="userQuery">Enter your SQL query:</label><br>
+        <textarea id="userQuery" name="userQuery" rows="4" cols="50"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+<div id="queryHistory">
+    <!-- Query history will be displayed here -->
+</div>
+
+<script>
+    // Initialize an array to store query history
+    const queryHistory = [];
+
+    // Function to display query history
+    function displayQueryHistory() {
+        const queryHistoryDiv = document.getElementById('queryHistory');
+        queryHistoryDiv.innerHTML = '';
+        queryHistory.forEach(query => {
+            const queryDiv = document.createElement('div');
+            queryDiv.innerHTML = `
+                <h3>User Query:</h3>
+                <p>${query.userQuery}</p>
+                <h3>Generated SQL Query:</h3>
+                <pre>${query.sqlQuery}</pre>
+                <h3>Query Result:</h3>
+                <pre>${JSON.stringify(query.queryResult)}</pre> <!-- Convert result to JSON string -->
+            `;
+            queryHistoryDiv.appendChild(queryDiv);
+        });
+    }
+
+
+    // Function to fetch login user information
+    async function fetchLoginUser() {
+        try {
+            const response = await fetch('/api/user');
+            const data = await response.json();
+
+            return data['email'];
+        } catch (error) {
+            console.error('Error fetching login user:', error);
+            return null;
+        }
+    }
+
+    document.getElementById('queryForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const userQuery = document.getElementById('userQuery').value;
+        const loginUser = await fetchLoginUser();
+        if (loginUser) {
+            // Include login user information along with user query
+            const requestBody = {
+                user_query: userQuery,
+                user_info: loginUser
+            };
+
+            // Send request with login user information
+            fetch('/api/queries/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token if needed
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add the new query, result, and SQL query to queryHistory array
+                queryHistory.push({ userQuery: userQuery, sqlQuery: data.sql_query, queryResult: data.query_result });
+                // Display query history
+                displayQueryHistory();
+            })
+            .catch(error => console.error('Error:', error));
+        } else {
+            console.error('Login user information not available.');
+        }
+    });
+
+    // Initial display of query history
+    displayQueryHistory();
+</script>

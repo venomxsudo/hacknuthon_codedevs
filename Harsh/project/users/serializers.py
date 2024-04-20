@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PendingUser, User,Query
+from .models import PendingUser, User
 from django.core.exceptions import ValidationError
 # from hcaptcha.fields import hCaptchaField
 from django.contrib.auth import get_user_model
@@ -74,12 +74,7 @@ class ResetPasswordSerializer(serializers.Serializer):
     token = serializers.CharField()
     new_password = serializers.CharField()
 
-class QuerySerializer(serializers.ModelSerializer):
-    photos = serializers.ImageField(max_length=None, use_url=True)
 
-    class Meta:
-        model = Query
-        fields = '__all__'
     
     # def update(self,instance,validated_data):
     #     for attr,value in validated_data.items():
@@ -89,6 +84,14 @@ class QuerySerializer(serializers.ModelSerializer):
     #             setattr(instance,attr,value)
     #     instance.save()
     #     return instance
+from rest_framework import serializers
+from .models import QueryModel  # Assuming you have a Query model
+
+class QuerySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QueryModel
+        fields = ['user_query']
+
 '''
 class VisitorSerializer(serializers.ModelSerializer):
     class Meta:

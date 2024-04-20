@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path , include
-from users.views import LoginView,admin_images,home_view
+from users.views import LoginView,admin_images,home_view,QueryViewSet
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
@@ -38,10 +38,12 @@ urlpatterns = [
     path('forgot/', TemplateView.as_view(template_name='forgot.html'), name='forgot'),
     path('reset/', TemplateView.as_view(template_name='reset.html'), name='reset'),
     path('verify/', TemplateView.as_view(template_name='verify.html'), name='verify'),
+    path('queries_chat/', TemplateView.as_view(template_name='query_form.html'), name='query'),
     path('home/', home_view, name='home'),
-    path('garbage/',TemplateView.as_view(template_name='query.html'), name='query'),
+    # path('garbage/',TemplateView.as_view(template_name='query.html'), name='query'),
     path('admin/images/', admin_images, name='admin_images'),
     path('api/', include('users.urls')),    
     # path('admin/', include('admin_soft.urls')),
+    
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

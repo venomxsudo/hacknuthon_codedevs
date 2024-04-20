@@ -47,46 +47,35 @@ class PendingUser(models.Model):
     otp = models.CharField(max_length=200 , null=True, blank=True)  
     created_at = models.DateTimeField(default=timezone.now)
 
+# from django.db import models
+# from django.contrib.auth.models import User
+
 from django.db import models
-from django.contrib.auth.models import User
 
-class Query(models.Model):
-    name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    link = models.CharField(max_length=255)
-    message = models.TextField()
-    photos = models.ImageField(upload_to='query_photos')
-    date = models.DateField()
-    time = models.TimeField()
+class QueryModel(models.Model):
+    user_query = models.TextField()
 
-# class Query(models.Model):
-#     name = models.CharField(max_length=255)
-#     phone = models.CharField(max_length=20)
-#     email = models.EmailField()
-#     query = models.TextField()
-#     date = models.DateTimeField(auto_now_add=True)
-#     status = models.BooleanField(default=False)
-
-'''    
-class Visitor(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    company = models.CharField(max_length=255)
-    checkInTime = models.DateTimeField()
-    checkOutTime = models.DateTimeField()
-
-
+    def __str__(self):
+        return self.user_query
     
-class Registration(models.Model):
-    name = models.CharField(max_length=255)
-    role = models.CharField(max_length=255)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    company = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-    confirmPassword = models.CharField(max_length=255)
-    checkInTime = models.DateTimeField()
-    checkOutTime = models.DateTimeField()
-'''
+from django.db import models
+
+class ChatHistory(models.Model):
+    user = models.CharField(max_length=255, default='', null=True)
+    user_query = models.TextField()
+    generated_sql_query = models.TextField()
+
+    def _str_(self):
+        return f"User Query: {self.user_query}, Generated SQL Query: {self.generated_sql_query}, User: {self.user}"
+
+
+from django.db import models
+
+class QueryRun(models.Model):
+    user = models.CharField(max_length=255, default='', null=True)
+    user_query = models.TextField()
+    generated_sql_query = models.TextField()
+    query_result = models.TextField(null=True)  # Store the result of the executed query
+
+    def __str__(self):
+        return f"User Query: {self.user_query}, Generated SQL Query: {self.generated_sql_query}, User: {self.user}"
